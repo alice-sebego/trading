@@ -51,9 +51,11 @@ class _DashboardState extends State<DashboardPage> {
     });
     _webSocketService.listenToMessages();
     _webSocketService.connectionStatusStream.listen((isConnected) {
-      setState(() {
-        _isConnected = isConnected;
-      });
+      if (_isMounted) {
+        setState(() {
+          _isConnected = isConnected;
+        });
+      }
     });
   }
 
