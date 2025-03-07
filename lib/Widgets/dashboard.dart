@@ -61,6 +61,7 @@ class _DashboardState extends State<DashboardPage> {
 
   @override
   void dispose() {
+    _isMounted = false;
     _webSocketService.close();
     super.dispose();
   }
