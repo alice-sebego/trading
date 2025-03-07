@@ -16,12 +16,15 @@ class _DashboardState extends State<DashboardPage> {
   final Map<String, Map<String, dynamic>> _tradingData = {};
   final Map<int, String> _channelIdToSymbol = {};
   bool _isConnected = true;
+  bool _isMounted = false;
 
   @override
   void initState() {
     super.initState();
+    _isMounted = true;
     _webSocketService = WebSocketChannelService();
     _webSocketService.addMessageHandler((message) {
+      if (!_isMounted) return;
       final data = jsonDecode(message);
       // print('Received message: $data'); // Log for received messages
 
@@ -36,8 +39,8 @@ class _DashboardState extends State<DashboardPage> {
         if (symbol != null) {
           final parsedData = {
             "symbol": symbol,
-            "lastPrice": data[1][6] ?? 0.0,
-            "dailyChange": data[1][5] ?? 0.0,
+            "lastPrice": (data[1][6] ?? 0.0).toDouble(),
+            "dailyChange": (data[1][5] ?? 0.0).toDouble(),
           };
           setState(() {
             _tradingData[symbol] = parsedData;
