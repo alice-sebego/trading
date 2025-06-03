@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:trading/utils/devise_icon.dart';
 
+String convertSymbol(String symbol) {
+  if (symbol.startsWith('t') && symbol.length == 7) {
+    return '${symbol.substring(1, 4)}/${symbol.substring(4)}'; // tBTCUSD → BTC/USD
+  }
+  return symbol;
+}
+
 class DeviseCard extends StatelessWidget {
   final String symbol;
   final double lastPrice;

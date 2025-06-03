@@ -41,22 +41,18 @@ class DeviseDetailPage extends StatelessWidget {
             Text(
               'Symbol: $symbol',
               style: const TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-              ),
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            Text(
-              'Last Price: \$${lastPrice.toStringAsFixed(2)}'
-            ),
+            Text('Last Price: \$${lastPrice.toStringAsFixed(2)}'),
             const SizedBox(height: 16),
             Text(
               'Daily Change: ${dailyChange.toStringAsFixed(2)}%',
               style: TextStyle(
-                color: dailyChange >= 0 ? Colors.green : Colors.red,
-                fontSize: 18
-              ),
+                  color: dailyChange >= 0 ? Colors.green : Colors.red,
+                  fontSize: 18),
             ),
           ],
         ),

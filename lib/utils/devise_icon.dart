@@ -10,24 +10,19 @@ IconData getDeviseIcon(String symbol) {
     case 'Ripple' || 'tXRPUSD':
       return CommunityMaterialIcons.hexagon; // xrp
     case 'Tezos' || 'tXTZUSD':
-      return CommunityMaterialIcons
-          .currency_eth; 
+      return CommunityMaterialIcons.currency_eth;
     case 'Polkadot' || 'tDOTUSD':
-      return CommunityMaterialIcons
-          .hexagon; 
+      return CommunityMaterialIcons.hexagon;
     case 'Litecoin' || 'tLTCUSD':
       return CommunityMaterialIcons.litecoin; // currency_ltc
     case 'Cardano' || 'tADAUSD':
       return CommunityMaterialIcons.card;
     case 'Stellar' || 'tXLMUSD':
-      return CommunityMaterialIcons
-          .currency_usd_circle; 
+      return CommunityMaterialIcons.currency_usd_circle;
     case 'NEO' || 'tNEOUSD':
-      return CommunityMaterialIcons
-          .hexagon; 
+      return CommunityMaterialIcons.hexagon;
     case 'EOS' || 'tEOSUSD':
-      return CommunityMaterialIcons
-          .hexagon; 
+      return CommunityMaterialIcons.hexagon;
     default:
       return CommunityMaterialIcons.currency_usd;
   }

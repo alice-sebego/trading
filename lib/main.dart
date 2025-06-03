@@ -14,14 +14,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Trading',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 9, 126, 126)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 9, 126, 126)),
         useMaterial3: true,
       ),
       initialRoute: '/', // initial root
       routes: {
         '/': (context) => const MyHomePage(title: 'Your trading'), // homepage
-        '/dashboard': (context) =>
-            const DashboardPage(), // dashboard page
+        '/dashboard': (context) => const DashboardPage(), // dashboard page
       },
     );
   }
@@ -43,14 +43,13 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 9, 126, 126),
         iconTheme: const IconThemeData(
-          color: Colors.white, 
+          color: Colors.white,
         ),
         title: Text(
           widget.title,
           style: const TextStyle(
-            color: Colors.white, 
+            color: Colors.white,
           ),
-          
         ),
         centerTitle: true,
       ),
@@ -60,8 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const Text('Welcome to your trading board',
                 style: TextStyle(
-                  color: Colors.black, 
-                  fontSize: 28.0, 
+                  color: Colors.black,
+                  fontSize: 28.0,
                 )),
             const SizedBox(height: 20),
             Container(
@@ -70,43 +69,40 @@ class _MyHomePageState extends State<MyHomePage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: const Color.fromARGB(
-                      255, 9, 126, 126),
+                  color: const Color.fromARGB(255, 9, 126, 126),
                   width: 10,
                 ),
                 image: const DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/trading.jpg')),
+                    fit: BoxFit.cover, image: AssetImage('assets/trading.jpg')),
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Navigator.pushNamed(context, '/dashboard');
-                Navigator.of(context).push(_createRoute()); 
+                Navigator.of(context).push(_createRoute());
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color.fromARGB(255, 9, 126, 126),
+                backgroundColor: const Color.fromARGB(255, 9, 126, 126),
               ),
               child: const Text(
                 'See Dashboard',
                 style: TextStyle(
-                  color: Colors.white, 
+                  color: Colors.white,
                 ),
               ),
             ),
           ],
         ),
       ),
-      
     );
   }
 }
 
 Route _createRoute() {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => const DashboardPage(),
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        const DashboardPage(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = const Offset(0.0, 1.0);
       var end = Offset.zero;
@@ -120,4 +116,3 @@ Route _createRoute() {
     },
   );
 }
-

@@ -3,15 +3,26 @@ import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketChannelService {
+  // >>> AJOUT POUR LES TESTS -------------------------------
+  static WebSocketChannelService Function()? testingFactory;
+
+  factory WebSocketChannelService() {
+    if (testingFactory != null) return testingFactory!(); // injecté en test
+    return WebSocketChannelService._internal();
+  }
+  // <<< FIN AJOUT ------------------------------------------
+
   late final WebSocketChannel _channel;
   final List<void Function(dynamic message)> _messageHandlers = [];
   final StreamController<bool> _connectionStatusController =
       StreamController<bool>();
 
-  WebSocketChannelService() {
+  // Constructeur interne principal
+  WebSocketChannelService._internal() {
     _channel = WebSocketChannel.connect(
       Uri.parse('wss://api-pub.bitfinex.com/ws/2'),
     );
+
     _subscribeToTickers([
       'tBTCUSD', // Bitcoin
       'tETHUSD', // Ethereum
@@ -26,7 +37,10 @@ class WebSocketChannelService {
     ]);
   }
 
-    Stream<bool> get connectionStatusStream => _connectionStatusController.stream;
+  // Constructeur nommé vide pour tests/fakes
+   WebSocketChannelService.fakeConstructor();
+
+  Stream<bool> get connectionStatusStream => _connectionStatusController.stream;
 
   void _subscribeToTickers(List<String> symbols) {
     for (var symbol in symbols) {
@@ -57,11 +71,11 @@ class WebSocketChannelService {
       },
       onError: (error) {
         _connectionStatusController.add(false);
-        print('Erreur : $error');
+        // print('Erreur : $error'); // warning lint possible, mais OK en dev
       },
       onDone: () {
         _connectionStatusController.add(false);
-        print('Connexion terminée');
+        // print('Connexion terminée'); // idem
       },
     );
   }

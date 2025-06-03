@@ -72,17 +72,17 @@ class _DashboardState extends State<DashboardPage> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 9, 126, 126),
         iconTheme: const IconThemeData(
-          color: Colors.white, 
+          color: Colors.white,
         ),
         title: const Text(
           'Dashboard',
-           style: TextStyle(
-              color: Colors.white,
-            ),
+          style: TextStyle(
+            color: Colors.white,
           ),
+        ),
         centerTitle: true,
       ),
-       body: _isConnected
+      body: _isConnected
           ? ListView.builder(
               itemCount: _tradingData.length,
               itemBuilder: (context, index) {
@@ -107,31 +107,31 @@ class _DashboardState extends State<DashboardPage> {
               },
             )
           : Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error, size: 80, color: Colors.red),
-              const SizedBox(height: 20),
-              const Text(
-                'Failed Connection',
-                style: TextStyle(fontSize: 24, color: Colors.red),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error, size: 80, color: Colors.red),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Failed Connection',
+                    style: TextStyle(fontSize: 24, color: Colors.red),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      _webSocketService.listenToMessages();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 9, 126, 126),
+                    ),
+                    child: const Text(
+                      'Try again',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  _webSocketService.listenToMessages();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 9, 126, 126),
-                ),
-                child: const Text(
-                  'Try again',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
     );
   }
 }
