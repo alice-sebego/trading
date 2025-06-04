@@ -1,12 +1,19 @@
-# trading
+# Trading App 📈
 
-A new Flutter project.
+![Flutter CI](https://github.com/alice-dev/trading/actions/workflows/flutter_ci.yml/badge.svg)
+![Flutter Version](https://img.shields.io/badge/flutter-3.19.6-blue?logo=flutter)
 
-## Getting Started
+A real-time currency tracking Flutter application using WebSocket.
 
-This project is a starting point for a Flutter application.
+## Features
+- Real-time price updates via WebSocket
+- Interactive currency cards
+- Unit and widget tests with GitHub Actions
 
-A few resources to get you started if this is your first Flutter project:
+
+## Flutter documentation
+
+A few resources to get:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
 - [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
