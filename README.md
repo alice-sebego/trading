@@ -1,6 +1,6 @@
 # Trading App 📈
 
-![Flutter CI](https://github.com/alice-dev/trading/actions/workflows/flutter_ci.yml/badge.svg)
+![Flutter CI](https://github.com/alice-sebego/trading/actions/workflows/flutter_ci.yml/badge.svg)
 ![Flutter Version](https://img.shields.io/badge/flutter-3.19.6-blue?logo=flutter)
 
 A real-time currency tracking Flutter application using WebSocket.
