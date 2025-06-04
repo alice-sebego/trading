@@ -33,7 +33,6 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: ${{ success() }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -43,16 +42,18 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: automatic PR from develop to main"
+          commit-message: "chore: auto PR develop → main"
           title: "Auto PR: develop → main"
           body: |
-            Auto-generated PR after successful tests on develop.
+            PR automatically opened from develop to main after successful tests.
           base: main
           branch: develop
+          delete-branch: false
 
-      - name: Enable auto-merge for PR
+      - name: Enable auto-merge if PR was created
+        if: ${{ steps.cpr.outputs.pull-request-number }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-          merge-method: squash  # or "merge", or "rebase"
+          merge-method: squash
