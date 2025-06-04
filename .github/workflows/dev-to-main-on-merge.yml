@@ -1,0 +1,39 @@
+name: Create PR develop → main (if changed)
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  check-and-create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch all history for all branches
+        run: git fetch --unshallow || true
+
+      - name: Check for diff with main
+        id: check_diff
+        run: |
+          git fetch origin main
+          if git diff --quiet origin/main...HEAD; then
+            echo "no_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "no_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR from develop to main
+        if: steps.check_diff.outputs.no_changes == 'false'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Auto PR: develop → main'
+          body: |
+            This pull request was automatically created after updates to the `develop` branch.
+            Please review and merge if everything looks good.
+          base: main
+          branch: auto/pr-develop-to-main
+          delete-branch: false
