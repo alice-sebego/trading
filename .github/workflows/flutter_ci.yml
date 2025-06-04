@@ -5,7 +5,7 @@ on:
     branches: [ develop ]
 
 jobs:
-  build-and-test:
+  build-and-pr:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +17,7 @@ jobs:
         with:
           flutter-version: '3.19.6'
 
-      - name: Flutter version
+      - name: Show Flutter version
         run: flutter --version
 
       - name: Get dependencies
@@ -29,31 +29,21 @@ jobs:
       - name: Run widget tests
         run: flutter test test/dashboard_test.dart
 
-  create-and-merge-pr:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: ${{ success() }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v6
+      - name: Create Pull Request from develop to main
+        id: create-pr
+        uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: auto PR develop → main"
-          title: "Auto PR: develop → main"
-          body: |
-            PR automatically opened from develop to main after successful tests.
+          title: 'Merge develop into main'
+          body: 'This pull request was automatically created by GitHub Actions.'
           base: main
-          branch: develop
+          branch: auto/pr-develop-to-main
           delete-branch: false
 
-      - name: Enable auto-merge if PR was created
-        if: ${{ steps.cpr.outputs.pull-request-number }}
+      - name: Enable auto-merge for the pull request
+        if: ${{ steps.create-pr.outputs.pull-request-number }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
           merge-method: squash
