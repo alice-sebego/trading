@@ -29,21 +29,30 @@ jobs:
       - name: Run widget tests
         run: flutter test test/dashboard_test.dart
 
-  create-pr:
+  create-and-merge-pr:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: ${{ success() }} 
+    if: ${{ success() }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: automatic PR from develop to main"
-          title: "Merge develop into main (automated)"
+          title: "Auto PR: develop → main"
           body: |
-            This PR was created automatically after successful tests.
+            Auto-generated PR after successful tests on develop.
           base: main
-          branch: develop  
+          branch: develop
+
+      - name: Enable auto-merge for PR
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash  # or "merge", or "rebase"
