@@ -2,9 +2,7 @@ name: Flutter CI
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [ develop ]
 
 jobs:
   build-and-test:
@@ -30,3 +28,22 @@ jobs:
 
       - name: Run widget tests
         run: flutter test test/dashboard_test.dart
+
+  create-pr:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: ${{ success() }} 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: automatic PR from develop to main"
+          title: "Merge develop into main (automated)"
+          body: |
+            This PR was created automatically after successful tests.
+          base: main
+          branch: develop  
