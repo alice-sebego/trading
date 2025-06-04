@@ -1,0 +1,42 @@
+name: Feature/Fix → Develop CI
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+
+jobs:
+  build-and-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run unit tests
+        run: flutter test test/unit/convert_symbol_test.dart
+
+      - name: Run widget tests
+        run: flutter test test/dashboard_test.dart
+
+      - name: Create Pull Request to develop
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Merge ${{ github.ref_name }} into develop'
+          body: 'This PR was automatically created by GitHub Actions.'
+          base: develop
+          branch: auto/pr-${{ github.ref_name }}-to-develop
+          delete-branch: false
