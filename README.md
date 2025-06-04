@@ -13,7 +13,7 @@ A real-time currency tracking Flutter application using WebSocket.
 
 ## Flutter documentation
 
-A few resources to get about Flutter:
+A few resources to get informations about Flutter:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
 - [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
