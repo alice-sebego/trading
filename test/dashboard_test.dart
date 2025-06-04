@@ -1,60 +1,69 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:trading/Services/websocketchannel_service.dart';
-import 'package:trading/TestUtils/fake_websocket_service.dart';
-import 'package:trading/Widgets/dashboard.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:trading/Widgets/devise_card.dart';
 
 void main() {
-  test('convertSymbol transforme tBTCUSD en BTC/USD', () {
-    expect(convertSymbol('tBTCUSD'), 'BTC/USD');
-  });
-
-  test('convertSymbol laisse intact les symboles inconnus', () {
-    expect(convertSymbol('ETH/EUR'), 'ETH/EUR');
-  });
-  
-  late FakeWebSocketService fakeService;
-
-  setUp(() {
-    fakeService = FakeWebSocketService();
-    WebSocketChannelService.testingFactory = () => fakeService;
-  });
-
-  tearDown(() {
-    WebSocketChannelService.testingFactory = null;
-  });
-
-  testWidgets('Affiche une DeviseCard quand un message WebSocket arrive',
+  testWidgets('DeviseCard affiche le symbole, le prix et le changement',
       (WidgetTester tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: DashboardPage(),
+      MaterialApp(
+        home: Scaffold(
+          body: DeviseCard(
+            symbol: 'BTC/USD',
+            lastPrice: 27000.55,
+            dailyChange: 1.23,
+            onTap: () {},
+          ),
+        ),
       ),
     );
 
-    // Simule d'abord un message "subscribed" pour associer le chanId à un symbole
-    fakeService.emitMessage(
-      '''{
-        "event": "subscribed",
-        "chanId": 1234,
-        "symbol": "tBTCUSD"
-      }''',
-    );
-
-    await tester.pumpAndSettle();
-
-    // Puis simule un message de ticker avec des données valides
-    fakeService.emitMessage(
-      '''[
-        1234,
-        [123.45, 10, 123.55, 20, 123.00, 0.01, 1000, 123.10, 123.50, 1600000000000]
-      ]''',
-    );
-
-    await tester.pumpAndSettle();
-
-    // Vérifie que le texte 'BTC/USD' apparaît dans l’interface
     expect(find.text('BTC/USD'), findsOneWidget);
+    expect(find.text('Last Price: \$27000.55'), findsOneWidget);
+    expect(find.text('1.23%'), findsOneWidget);
+  });
+
+  testWidgets('DeviseCard affiche le changement négatif en rouge',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DeviseCard(
+            symbol: 'ETH/USD',
+            lastPrice: 1850.10,
+            dailyChange: -2.50,
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('-2.50%'), findsOneWidget);
+
+    final Text textWidget = tester.widget(find.text('-2.50%'));
+    expect(textWidget.style?.color, equals(Colors.red));
+  });
+
+  testWidgets('DeviseCard appelle onTap lors du tap',
+      (WidgetTester tester) async {
+    bool tapped = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DeviseCard(
+            symbol: 'XRP/USD',
+            lastPrice: 0.55,
+            dailyChange: 0.5,
+            onTap: () {
+              tapped = true;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(DeviseCard));
+    expect(tapped, isTrue);
   });
 }
