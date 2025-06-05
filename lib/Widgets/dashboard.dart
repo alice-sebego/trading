@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:trading/Services/websocketchannel_service.dart';
+import 'package:trading/Services/auth_service.dart'; 
 import 'dart:convert';
 import 'package:trading/Widgets/devise_card.dart';
 import 'package:trading/Widgets/devise_detail_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
   _DashboardState createState() => _DashboardState();
@@ -13,6 +15,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardState extends State<DashboardPage> {
   late final WebSocketChannelService _webSocketService;
+  final AuthService _authService = AuthService(); 
   final Map<String, Map<String, dynamic>> _tradingData = {};
   final Map<int, String> _channelIdToSymbol = {};
   bool _isConnected = true;
@@ -23,16 +26,15 @@ class _DashboardState extends State<DashboardPage> {
     super.initState();
     _isMounted = true;
     _webSocketService = WebSocketChannelService();
+
     _webSocketService.addMessageHandler((message) {
       if (!_isMounted) return;
       final data = jsonDecode(message);
-      // print('Received message: $data'); // Log for received messages
 
       if (data is Map && data['event'] == 'subscribed') {
         final symbol = data['symbol'];
         final chanId = data['chanId'];
         _channelIdToSymbol[chanId] = symbol;
-        // print('Subscribed to: $symbol');
       } else if (data is List && data.length > 1) {
         final chanId = data[0];
         final symbol = _channelIdToSymbol[chanId];
@@ -45,10 +47,10 @@ class _DashboardState extends State<DashboardPage> {
           setState(() {
             _tradingData[symbol] = parsedData;
           });
-          // print('Updated trading data for $symbol: $parsedData'); // Log for updated data
         }
       }
     });
+
     _webSocketService.listenToMessages();
     _webSocketService.connectionStatusStream.listen((isConnected) {
       if (_isMounted) {
@@ -66,21 +68,30 @@ class _DashboardState extends State<DashboardPage> {
     super.dispose();
   }
 
+  Future<void> _logout() async {
+    await _authService.signOut();
+    if (context.mounted) {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          '/', (route) => false); // Retour à AuthWrapper
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 9, 126, 126),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-        title: const Text(
-          'Dashboard',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Dashboard', style: TextStyle(color: Colors.white)),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            tooltip: 'Logout',
+            onPressed: _logout,
+          ),
+        ],
       ),
       body: _isConnected
           ? ListView.builder(
