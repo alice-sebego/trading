@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'Widgets/dashboard.dart';
+import 'Widgets/auth/login_page.dart';
+import 'Widgets/auth/register_page.dart';
 
-void main() async{
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  ); 
+  );
 
   runApp(const MyApp());
 }
@@ -15,107 +19,84 @@ void main() async{
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Trading',
+      title: 'Crypto Trading',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 9, 126, 126)),
+          seedColor: const Color.fromARGB(255, 9, 126, 126),
+        ),
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 9, 126, 126),
+          centerTitle: true,
+          iconTheme: IconThemeData(color: Colors.white),
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 9, 126, 126),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(fontSize: 28, color: Colors.black),
+          bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
+        ),
       ),
-      initialRoute: '/', // initial root
-      routes: {
-        '/': (context) => const MyHomePage(title: 'Your trading'), // homepage
-        '/dashboard': (context) => const DashboardPage(), // dashboard page
+      home: const AuthWrapper(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/dashboard':
+            return _slideRoute(const DashboardPage());
+          case '/register':
+            return _slideRoute(const RegisterPage());
+          default:
+            return null;
+        }
       },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+/// Widget pour rediriger automatiquement selon l’état de connexion
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 9, 126, 126),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Welcome to your trading board',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 28.0,
-                )),
-            const SizedBox(height: 20),
-            Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color.fromARGB(255, 9, 126, 126),
-                  width: 10,
-                ),
-                image: const DecorationImage(
-                    fit: BoxFit.cover, image: AssetImage('assets/trading.jpg')),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigator.pushNamed(context, '/dashboard');
-                Navigator.of(context).push(_createRoute());
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 9, 126, 126),
-              ),
-              child: const Text(
-                'See Dashboard',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
+        }
+        if (snapshot.hasData) {
+          return const DashboardPage(); // Redirection après connexion
+        }
+        return const LoginPage(); // Sinon page de connexion
+      },
     );
   }
 }
 
-Route _createRoute() {
+/// Transition Slide
+PageRouteBuilder _slideRoute(Widget page) {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) =>
-        const DashboardPage(),
+    pageBuilder: (context, animation, secondaryAnimation) => page,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = const Offset(0.0, 1.0);
-      var end = Offset.zero;
-      var curve = Curves.ease;
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
+      var tween = Tween(begin: const Offset(0, 1), end: Offset.zero)
+          .chain(CurveTween(curve: Curves.ease));
       return SlideTransition(
         position: animation.drive(tween),
         child: child,

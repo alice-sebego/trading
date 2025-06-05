@@ -10,6 +10,10 @@ A real-time currency tracking Flutter application using WebSocket.
 - Interactive currency cards
 - Unit and widget tests with GitHub Actions
 
+## Useful Commands
+Run the app in Chrome
+
+`flutter run -d chrome`
 
 ## Flutter documentation
 
