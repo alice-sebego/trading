@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "109029294892",
+    "project_id": "trading-flutter-app",
+    "storage_bucket": "trading-flutter-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109029294892:android:55bf62ab8847b7d8a26289",
+        "android_client_info": {
+          "package_name": "com.example.trading"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAvQpJuO8KJVpPz6cNVk3YB0OmhRT2_44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
