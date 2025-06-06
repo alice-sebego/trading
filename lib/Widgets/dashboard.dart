@@ -68,12 +68,48 @@ class _DashboardState extends State<DashboardPage> {
     super.dispose();
   }
 
+  // Boîte de dialogue de confirmation
+  void _confirmLogout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Do you really want to logout ?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+              },
+            ),
+            TextButton(
+              child: const Text('Logout'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+                _logout(); // Déconnexion réelle
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Déconnexion + snackbar
   Future<void> _logout() async {
     await _authService.signOut();
     if (context.mounted) {
       // ignore: use_build_context_synchronously
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          '/', (route) => false); // Retour à AuthWrapper
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Déconnexion réussie'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
     }
   }
 
@@ -89,7 +125,7 @@ class _DashboardState extends State<DashboardPage> {
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             tooltip: 'Logout',
-            onPressed: _logout,
+            onPressed: _confirmLogout,
           ),
         ],
       ),
