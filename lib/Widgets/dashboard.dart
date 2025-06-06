@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trading/Services/websocketchannel_service.dart';
-import 'package:trading/Services/auth_service.dart'; 
+import 'package:trading/Services/auth_service.dart';
+import 'package:trading/Widgets/account_screen.dart'; 
 import 'dart:convert';
 import 'package:trading/Widgets/devise_card.dart';
 import 'package:trading/Widgets/devise_detail_page.dart';
@@ -123,10 +124,20 @@ class _DashboardState extends State<DashboardPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            tooltip: 'Logout',
-            onPressed: _confirmLogout,
-          ),
+              icon: const Icon(Icons.account_circle, color: Colors.white),
+              tooltip: 'My Account',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const AccountScreen()),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.logout, color: Colors.white),
+              tooltip: 'Logout',
+              onPressed: _confirmLogout,
+            ),
         ],
       ),
       body: _isConnected
@@ -153,32 +164,42 @@ class _DashboardState extends State<DashboardPage> {
                 );
               },
             )
-          : Center(
+            : Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error, size: 80, color: Colors.red),
+                  const Icon(Icons.wifi_off, size: 80, color: Colors.red),
                   const SizedBox(height: 20),
                   const Text(
-                    'Failed Connection',
+                    'Failed connection',
                     style: TextStyle(fontSize: 24, color: Colors.red),
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.refresh, color: Colors.white),
+                    label: const Text(
+                      'Reconnexion',
+                      style: TextStyle(color: Colors.white),
+                    ),
                     onPressed: () {
                       _webSocketService.listenToMessages();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Tentative de reconnexion...'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 9, 126, 126),
-                    ),
-                    child: const Text(
-                      'Try again',
-                      style: TextStyle(color: Colors.white),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
                     ),
                   ),
                 ],
               ),
-            ),
+            )
+
     );
   }
 }
