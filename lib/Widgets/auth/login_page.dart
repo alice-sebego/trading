@@ -29,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (context.mounted) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Successfully logged in')),
         );
