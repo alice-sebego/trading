@@ -1,0 +1,22 @@
+name: Flutter Web → Firebase Hosting
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'
+      - run: |
+          flutter pub get
+          flutter test
+      - run: |
+          flutter config --enable-web
+          flutter build web --release
+      - run: curl -sL https://firebase.tools | bash
+      - run: firebase deploy --only hosting --token "${{ secrets.FIREBASE_TOKEN }}"
