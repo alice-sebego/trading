@@ -5,45 +5,26 @@ on:
     branches: [ develop ]
 
 jobs:
-  build-and-pr:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: 
           flutter-version: '3.19.6'
+      - run: flutter pub get
+      - run: flutter test test/unit/convert_symbol_test.dart
+      - run: flutter test test/dashboard_test.dart
 
-      - name: Show Flutter version
-        run: flutter --version
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Run unit tests
-        run: flutter test test/unit/convert_symbol_test.dart
-
-      - name: Run widget tests
-        run: flutter test test/dashboard_test.dart
-
-      - name: Create Pull Request from develop to main
-        id: create-pr
+  create_pr:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create PR develop → main
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'Merge develop into main'
-          body: 'This pull request was automatically created by GitHub Actions.'
+          title: 'Merge develop into main (auto)'
           base: main
           branch: auto/pr-develop-to-main
-          delete-branch: false
-
-      - name: Enable auto-merge for the pull request
-        if: ${{ steps.create-pr.outputs.pull-request-number }}
-        uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
-          merge-method: squash
